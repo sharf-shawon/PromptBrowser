@@ -16,7 +16,7 @@ jobs:
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Build Docker image
-        run: docker build -t sharfy9/PromptBrowser:latest .
+        run: docker build -t sharfy9/promptbrowser:latest .
 
       - name: Push Docker image
-        run: docker push sharfy9/PromptBrowser:latest
+        run: docker push sharfy9/promptbrowser:latest
