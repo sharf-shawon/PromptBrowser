@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Essential Meta Tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO Meta Tags -->
+    <title>Prompt Browser – Save, Edit, Copy & Organize AI Prompts Locally</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="assets/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <link rel="manifest" href="assets/manifest.json">
+    <meta name="msapplication-TileColor" content="#4f46e5">
+    <meta name="theme-color" content="#4f46e5">
+    <meta
+      name="description"
+      content="Effortlessly manage your AI prompts with privacy. Create, edit, and organize them in your browser’s local storage, with robust import/export and search capabilities."
+    />
+    <meta
+      name="keywords"
+      content="AI prompt saver, AI prompt manager, Prompt Browser, prompt organizer, prompt editor, prompt creator, local storage prompts, manage AI prompts, AI prompt library, import export prompts, prompt management tool, search AI prompts, creative prompt management"
+    />
+    <meta name="author" content="Sharfuddin Shawon" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://prompts.shawon.me/" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="AI Prompt Saver - Create, Edit, &amp; Manage Your AI Prompts" />
+    <meta
+      property="og:description"
+      content="Effortlessly manage your AI prompts with privacy. Create, edit, and organize them in your browser’s local storage, with robust import/export and search capabilities."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://prompts.shawon.me/" />
+    <meta property="og:image" content="/assets/PromptBrowser.jpg" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AI Prompt Saver - Create, Edit, &amp; Manage Your AI Prompts" />
+    <meta
+      name="twitter:description"
+      content="Effortlessly manage your AI prompts with privacy. Create, edit, and organize them in your browser’s local storage, with robust import/export and search capabilities."
+    />
+    <meta name="twitter:image" content="/assets/PromptBrowser.jpg" />
+
+    <!-- Tailwind CSS Setup (Dark Mode via Class) -->
+    <script>
+      tailwind = { config: { darkMode: 'class' } };
+    </script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate.css for Animations -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+  </head>
+  <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col min-h-screen">
+    <!-- Notifications Container (Top Center) -->
+    <div id="notificationsContainer" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-40 space-y-2"></div>
+
+    <!-- Info Modal (Shown on First Visit or via Info Button) -->
+    <div id="infoModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900 bg-opacity-50 hidden" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 md:w-1/2 p-6 max-h-[90vh] overflow-y-auto">
+        <h3 id="infoModalTitle" class="text-2xl font-bold mb-4">Welcome to AI Prompt Saver</h3>
+        <div class="mb-4">
+          <p class="mb-2">AI Prompt Saver is a professional web application that enables you to create, edit, search, and store your AI prompts locally in your browser.</p>
+          <p class="mb-2">Import/Export your data as JSON files and enjoy real‑time search with keyword highlighting, tag bubbles with consistent colors, and optional variable substitution.</p>
+        </div>
+        <div class="mb-4">
+          <h4 class="font-bold mb-1">Features:</h4>
+          <ul class="list-disc list-inside">
+            <li>Create, edit, and delete AI prompts</li>
+            <li>Real‑time search with keyword highlighting</li>
+            <li>Tag bubbles with consistent colors (click a tag to search)</li>
+            <li>Import/Export data as JSON (file upload/download and copy-paste)</li>
+            <li>Optional variable substitution – if a prompt contains bracketed text (e.g. [variable]), you can be prompted for a value before copying</li>
+          </ul>
+        </div>
+        <div class="mb-4">
+          <h4 class="font-bold mb-1">Keyboard Shortcuts:</h4>
+          <ul class="list-disc list-inside">
+            <li><strong>Alt/Opt+N:</strong> Open the "Create New Prompt" modal</li>
+            <li><strong>Spacebar + typing:</strong> Automatically focus the search box and start searching</li>
+            <li><strong>Esc:</strong> Clear the search query</li>
+            <li><strong>Double-click (2 quick clicks):</strong> Copy prompt text (with variable substitution if enabled)</li>
+            <li><strong>Long press (800ms):</strong> Open the edit modal</li>
+          </ul>
+        </div>
+        <div class="flex justify-end">
+          <button id="closeInfoModal" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav role="navigation" aria-label="Main Navigation" class="bg-white dark:bg-gray-800 shadow">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex">
+            <div class="flex-shrink-0 flex items-center">
+              <img class="h-8 w-auto" src="assets/logo.png" alt="Prompt Browser" />
+            </div>
+            <!-- <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
+              <a href="#" class="border-indigo-500 text-gray-900 dark:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Home</a>
+              <a href="#" class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-gray-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">About</a>
+              <a href="#" class="border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 hover:text-gray-700 dark:hover:text-gray-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Contact</a>
+            </div> -->
+          </div>
+          <div class="flex items-center space-x-2">
+            <!-- Info Button -->
+            <button id="infoButton" class="p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Show Info">
+              <span class="text-sm font-medium">Info</span>
+            </button>
+            <!-- Import/Export Button in Navbar -->
+            <button id="importExportNavButton" class="p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Import/Export">
+              <span class="text-sm font-medium">Import/Export</span>
+            </button>
+            <!-- Dark Mode Toggle -->
+            <button id="themeToggle" class="p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Toggle Dark Mode">
+              <svg id="themeIcon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Icon will be set via JS -->
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto p-4">
+      <!-- Real-Time Search Box with Cancel Button -->
+      <div class="relative mb-4">
+        <input type="text" id="searchInput" placeholder="Search prompts..." class="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
+        <button id="clearSearchButton" class="absolute right-2 top-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">&times;</button>
+      </div>
+
+      <!-- Ask for Variable Input Checkbox -->
+      <div class="mb-4">
+        <label class="inline-flex items-center">
+          <input type="checkbox" id="askForVariableInput" class="form-checkbox h-5 w-5 text-indigo-600" />
+          <span class="ml-2">Ask for variable input?</span>
+        </label>
+      </div>
+
+      <!-- Prompt List (Responsive Grid) -->
+      <div id="promptsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Dynamically generated prompt cards will appear here -->
+      </div>
+    </main>
+
+    <!-- New Prompt Floating Button (Bottom Right) -->
+    <button id="newButton" class="fixed bottom-4 right-4 z-50 bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+      New
+    </button>
+
+    <!-- Create New Prompt Modal -->
+    <div id="createModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden" role="dialog" aria-modal="true" aria-labelledby="createModalTitle">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 md:w-1/2 p-6 max-h-[90vh] overflow-y-auto">
+        <h3 id="createModalTitle" class="text-xl font-bold mb-4">Create New Prompt</h3>
+        <form id="createPromptForm" class="space-y-4">
+          <div>
+            <label for="createPromptName" class="block text-sm font-medium">Name</label>
+            <input type="text" id="createPromptName" name="name" required class="mt-1 block w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700" />
+          </div>
+          <div>
+            <label for="createPromptContent" class="block text-sm font-medium">Prompt</label>
+            <textarea id="createPromptContent" name="prompt" required rows="3" class="mt-1 block w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700"></textarea>
+          </div>
+          <div>
+            <label for="createPromptDescription" class="block text-sm font-medium">Description (Optional)</label>
+            <textarea id="createPromptDescription" name="description" rows="2" class="mt-1 block w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700"></textarea>
+          </div>
+          <div>
+            <label for="createPromptTags" class="block text-sm font-medium">Tags (Optional)</label>
+            <input type="text" id="createPromptTags" name="tags" placeholder="comma separated" class="mt-1 block w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700" />
+          </div>
+          <div class="flex justify-end space-x-2">
+            <button type="button" id="cancelCreate" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400">Cancel</button>
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">Save Prompt</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Prompt Modal -->
+    <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 md:w-1/2 p-6 max-h-[90vh] overflow-y-auto">
+        <h3 id="editModalTitle" class="text-xl font-bold mb-4">Edit Prompt</h3>
+        <form id="editPromptForm" class="space-y-4">
+          <input type="hidden" id="editPromptId" />
+          <div>
+            <label for="editPromptName" class="block text-sm font-medium">Name</label>
+            <input type="text" id="editPromptName" name="name" required class="mt-1 block w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700" />
+          </div>
+          <div>
+            <label for="editPromptContent" class="block text-sm font-medium">Prompt</label>
+            <textarea id="editPromptContent" name="prompt" required rows="3" class="mt-1 block w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700"></textarea>
+          </div>
+          <div>
+            <label for="editPromptDescription" class="block text-sm font-medium">Description (Optional)</label>
+            <textarea id="editPromptDescription" name="description" rows="2" class="mt-1 block w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700"></textarea>
+          </div>
+          <div>
+            <label for="editPromptTags" class="block text-sm font-medium">Tags (Optional)</label>
+            <input type="text" id="editPromptTags" name="tags" placeholder="comma separated" class="mt-1 block w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700" />
+          </div>
+          <div class="flex justify-end space-x-2">
+            <button type="button" id="cancelEdit" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400">Cancel</button>
+            <button type="button" id="deletePromptModal" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">Delete</button>
+            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Import/Export Data Modal -->
+    <div id="importExportModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden" role="dialog" aria-modal="true" aria-labelledby="importExportModalTitle">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-11/12 md:w-1/2 p-6 max-h-[90vh] overflow-y-auto">
+        <h3 id="importExportModalTitle" class="text-xl font-bold mb-4">Import / Export Data</h3>
+        <textarea id="importExportTextarea" rows="10" class="w-full border border-gray-300 dark:border-gray-700 rounded-md shadow-sm p-2 mb-4 dark:bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+        <div class="flex flex-wrap justify-end gap-2">
+          <button id="copyDataBtn" type="button" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Copy Data</button>
+          <button id="downloadDataBtn" type="button" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500">Download JSON</button>
+          <button id="uploadDataBtn" type="button" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500">Upload JSON</button>
+          <button id="importDataBtn" type="button" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">Import Data</button>
+          <button id="closeImportExport" type="button" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400">Close</button>
+        </div>
+        <input type="file" id="fileInput" accept=".json" class="hidden" />
+      </div>
+    </div>
+
+    <!-- Sticky Footer -->
+    <footer class="bg-white dark:bg-gray-800 shadow p-4">
+      <div class="container mx-auto text-center">
+        <p class="text-sm text-gray-500 dark:text-gray-400">Prompt Browser 2025. <a href="http://shawon.me" target="_blank">Sharfuddin Shawon</a>.</p>
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const STORAGE_KEY = "aiPrompts";
+        let prompts = [];
+        let currentSearchQuery = "";
+
+        // Modal and Form Elements
+        const createModal = document.getElementById("createModal");
+        const createPromptForm = document.getElementById("createPromptForm");
+        const cancelCreate = document.getElementById("cancelCreate");
+        // Using the floating New button now.
+        const newButton = document.getElementById("newButton");
+
+        const editModal = document.getElementById("editModal");
+        const editPromptForm = document.getElementById("editPromptForm");
+        const cancelEditBtn = document.getElementById("cancelEdit");
+        const deletePromptModalBtn = document.getElementById("deletePromptModal");
+
+        const importExportModal = document.getElementById("importExportModal");
+        const importExportTextarea = document.getElementById("importExportTextarea");
+        // Use the new navbar Import/Export button.
+        const openImportExportButton = document.getElementById("importExportNavButton");
+        const copyDataBtn = document.getElementById("copyDataBtn");
+        const downloadDataBtn = document.getElementById("downloadDataBtn");
+        const uploadDataBtn = document.getElementById("uploadDataBtn");
+        const importDataBtn = document.getElementById("importDataBtn");
+        const closeImportExport = document.getElementById("closeImportExport");
+        const fileInput = document.getElementById("fileInput");
+
+        const searchInput = document.getElementById("searchInput");
+        const clearSearchButton = document.getElementById("clearSearchButton");
+        const promptsContainer = document.getElementById("promptsContainer");
+        const askForVariableInputCheckbox = document.getElementById("askForVariableInput");
+
+        // Info Modal Elements
+        const infoModal = document.getElementById("infoModal");
+        const closeInfoModal = document.getElementById("closeInfoModal");
+        const infoButton = document.getElementById("infoButton");
+
+        // Dark Mode Toggle Elements
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+
+        // Notifications Container
+        const notificationsContainer = document.getElementById("notificationsContainer");
+
+        /* ---------------- Dark Mode Setup with Debug Logging ---------------- */
+        function initializeTheme() {
+          const storedTheme = localStorage.getItem("theme");
+          const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          console.log("initializeTheme: storedTheme =", storedTheme, "; prefersDark =", prefersDark);
+          if (storedTheme) {
+            if (storedTheme === "dark") {
+              document.documentElement.classList.add("dark");
+              themeIcon.innerHTML =
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.485-8.485h-1M4.515 12.515h-1m15.364 4.95l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 5a7 7 0 100 14 7 7 0 000-14z" />';
+            } else {
+              document.documentElement.classList.remove("dark");
+              themeIcon.innerHTML =
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />';
+            }
+          } else {
+            if (prefersDark) {
+              document.documentElement.classList.add("dark");
+              localStorage.setItem("theme", "dark");
+              themeIcon.innerHTML =
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.485-8.485h-1M4.515 12.515h-1m15.364 4.95l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 5a7 7 0 100 14 7 7 0 000-14z" />';
+            } else {
+              document.documentElement.classList.remove("dark");
+              localStorage.setItem("theme", "light");
+              themeIcon.innerHTML =
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />';
+            }
+          }
+        }
+        initializeTheme();
+
+        themeToggle.addEventListener("click", function () {
+          if (document.documentElement.classList.contains("dark")) {
+            console.log("Toggling dark mode off");
+            document.documentElement.classList.remove("dark");
+            localStorage.setItem("theme", "light");
+            themeIcon.innerHTML =
+              '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />';
+          } else {
+            console.log("Toggling dark mode on");
+            document.documentElement.classList.add("dark");
+            localStorage.setItem("theme", "dark");
+            themeIcon.innerHTML =
+              '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.485-8.485h-1M4.515 12.515h-1m15.364 4.95l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 5a7 7 0 100 14 7 7 0 000-14z" />';
+          }
+        });
+
+        /* ---------------- Utility Functions ---------------- */
+        function generateId() {
+          return "_" + Math.random().toString(36).substr(2, 9);
+        }
+        function savePromptsToStorage() {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(prompts));
+        }
+        function loadPromptsFromStorage() {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            try {
+              prompts = JSON.parse(stored);
+            } catch (e) {
+              prompts = [];
+            }
+          }
+        }
+        function escapeRegExp(string) {
+          return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+        // Highlight matching search query text with contrasting colors.
+        function highlightText(text, query) {
+          let processed = text;
+          if (query) {
+            const regex = new RegExp("(" + escapeRegExp(query) + ")", "gi");
+            processed = processed.replace(regex, '<span class="bg-yellow-400 text-black">$1</span>');
+          }
+          // Always highlight text inside square brackets with a blue background.
+          processed = processed.replace(/\[([^\]]+)\]/g, '<span class="bg-blue-400 text-white">$&</span>');
+          return processed;
+        }
+
+        // Define an array of tag color classes.
+        const tagColors = [
+          "bg-red-200 text-red-800",
+          "bg-green-200 text-green-800",
+          "bg-blue-200 text-blue-800",
+          "bg-yellow-200 text-yellow-800",
+          "bg-purple-200 text-purple-800",
+          "bg-pink-200 text-pink-800",
+          "bg-indigo-200 text-indigo-800"
+        ];
+        // Simple hash function to get a color index based on tag text.
+        function getTagColor(tag) {
+          let hash = 0;
+          for (let i = 0; i < tag.length; i++) {
+            hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+          }
+          const index = Math.abs(hash) % tagColors.length;
+          return tagColors[index];
+        }
+
+        /* ---------------- Notifications Function ---------------- */
+        function showNotification(message) {
+          const notif = document.createElement("div");
+          notif.className = "bg-green-500 text-white px-4 py-2 rounded shadow flex items-center animate__animated animate__fadeInRight";
+          notif.innerHTML = `<span class="flex-1">${message}</span>
+            <button class="ml-2 text-xl leading-none focus:outline-none">&times;</button>`;
+          notif.querySelector("button").addEventListener("click", function () {
+            notif.classList.remove("animate__fadeInRight");
+            notif.classList.add("animate__fadeOutRight");
+            setTimeout(() => { notif.remove(); }, 500);
+          });
+          notificationsContainer.appendChild(notif);
+          setTimeout(() => {
+            if (notif.parentNode) {
+              notif.classList.remove("animate__fadeInRight");
+              notif.classList.add("animate__fadeOutRight");
+              setTimeout(() => { notif.remove(); }, 500);
+            }
+          }, 15000);
+        }
+
+        /* ---------------- Render Prompt Cards ---------------- */
+        function renderPrompts() {
+          promptsContainer.innerHTML = "";
+          prompts.forEach((prompt) => {
+            // Filter by search query.
+            if (currentSearchQuery) {
+              const lowerQuery = currentSearchQuery.toLowerCase();
+              if (
+                !(
+                  prompt.name.toLowerCase().includes(lowerQuery) ||
+                  prompt.prompt.toLowerCase().includes(lowerQuery) ||
+                  (prompt.description && prompt.description.toLowerCase().includes(lowerQuery)) ||
+                  (prompt.tags && prompt.tags.toLowerCase().includes(lowerQuery))
+                )
+              ) {
+                return; // Skip if no match.
+              }
+            }
+
+            const card = document.createElement("div");
+            card.className = "bg-white dark:bg-gray-800 p-4 rounded-lg shadow flex flex-col h-full animate__animated animate__fadeIn";
+            card.dataset.id = prompt.id;
+
+            // Top content container.
+            const contentDiv = document.createElement("div");
+            const title = document.createElement("h3");
+            title.className = "text-lg font-bold mb-1";
+            title.innerHTML = highlightText(prompt.name, currentSearchQuery);
+            const promptText = document.createElement("p");
+            promptText.className = "text-gray-800 dark:text-gray-200 mb-1";
+            promptText.innerHTML = "<strong>Prompt:</strong> " + highlightText(prompt.prompt, currentSearchQuery);
+            contentDiv.appendChild(title);
+            contentDiv.appendChild(promptText);
+            if (prompt.description) {
+              const descriptionEl = document.createElement("p");
+              descriptionEl.className = "text-gray-600 dark:text-gray-400 mb-1";
+              descriptionEl.innerHTML = "<strong>Description:</strong> " + highlightText(prompt.description, currentSearchQuery);
+              contentDiv.appendChild(descriptionEl);
+            }
+            // Render tag bubbles if tags exist.
+            if (prompt.tags) {
+              const tagsContainer = document.createElement("div");
+              tagsContainer.className = "flex flex-wrap gap-1 mt-1";
+              const tagList = prompt.tags.split(",").map((t) => t.trim()).filter((t) => t.length > 0);
+              tagList.forEach((tag) => {
+                const tagSpan = document.createElement("span");
+                tagSpan.className = "px-2 py-1 rounded-full text-xs cursor-pointer";
+                tagSpan.classList.add(...getTagColor(tag).split(" "));
+                tagSpan.textContent = tag;
+                // When clicked, set the search field to this tag.
+                tagSpan.addEventListener("click", function (e) {
+                  e.stopPropagation();
+                  searchInput.value = tag;
+                  currentSearchQuery = tag;
+                  renderPrompts();
+                });
+                tagsContainer.appendChild(tagSpan);
+              });
+              contentDiv.appendChild(tagsContainer);
+            }
+            card.appendChild(contentDiv);
+
+            // Footer container: Last Updated and buttons.
+            const footerDiv = document.createElement("div");
+            footerDiv.className = "mt-auto flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700";
+            const lastUpdated = document.createElement("p");
+            lastUpdated.className = "text-xs text-gray-500 dark:text-gray-400";
+            const date = new Date(prompt.lastUpdated);
+            lastUpdated.textContent = "Last Updated: " + date.toLocaleString();
+            const btnContainer = document.createElement("div");
+            btnContainer.className = "flex space-x-2";
+            const editBtn = document.createElement("button");
+            editBtn.className = "bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm";
+            editBtn.textContent = "Edit";
+            editBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              openEditModal(prompt.id);
+            });
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm";
+            deleteBtn.textContent = "Delete";
+            deleteBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              if (confirm("Are you sure you want to delete this prompt?")) {
+                deletePrompt(prompt.id);
+              }
+            });
+            btnContainer.appendChild(editBtn);
+            btnContainer.appendChild(deleteBtn);
+            footerDiv.appendChild(lastUpdated);
+            footerDiv.appendChild(btnContainer);
+            card.appendChild(footerDiv);
+
+            /* ---------------- Double-click (2 clicks) to Copy with Variable Substitution ---------------- */
+            let clickCount = 0;
+            let clickTimeout;
+            let longPressTimer;
+            let longPressTriggered = false;
+            function triggerEdit() {
+              openEditModal(prompt.id);
+            }
+            card.addEventListener("mousedown", function () {
+              longPressTriggered = false;
+              longPressTimer = setTimeout(() => {
+                longPressTriggered = true;
+                triggerEdit();
+                clickCount = 0;
+              }, 800);
+            });
+            card.addEventListener("mouseup", function () {
+              clearTimeout(longPressTimer);
+            });
+            card.addEventListener("touchstart", function () {
+              longPressTriggered = false;
+              longPressTimer = setTimeout(() => {
+                longPressTriggered = true;
+                triggerEdit();
+                clickCount = 0;
+              }, 800);
+            });
+            card.addEventListener("touchend", function () {
+              clearTimeout(longPressTimer);
+            });
+            card.addEventListener("click", function () {
+              if (longPressTriggered) return;
+              clickCount++;
+              if (clickCount === 1) {
+                clickTimeout = setTimeout(() => { clickCount = 0; }, 400);
+              } else if (clickCount === 2) {
+                clearTimeout(clickTimeout);
+                clickCount = 0;
+                let textToCopy = prompt.prompt;
+                // If "Ask for variable input?" is checked and text has bracketed variables…
+                if (askForVariableInputCheckbox.checked && /\[[^\]]+\]/.test(textToCopy)) {
+                  textToCopy = textToCopy.replace(/\[([^\]]+)\]/g, function (match, p1) {
+                    let userInput = window.prompt("Enter value for variable '" + p1 + "':", "");
+                    return userInput !== null && userInput.trim() !== "" ? userInput : match;
+                  });
+                }
+                navigator.clipboard.writeText(textToCopy)
+                  .then(() => { showNotification("Prompt copied to clipboard!"); })
+                  .catch(() => { showNotification("Failed to copy prompt."); });
+              }
+            });
+            promptsContainer.appendChild(card);
+          });
+        }
+
+        /* ---------------- Modal Functions ---------------- */
+        function openCreateModal() {
+          createModal.classList.remove("hidden");
+        }
+        function closeCreateModal() {
+          createModal.classList.add("hidden");
+          createPromptForm.reset();
+        }
+        function openEditModal(id) {
+          const promptData = prompts.find((p) => p.id === id);
+          if (promptData) {
+            document.getElementById("editPromptId").value = promptData.id;
+            document.getElementById("editPromptName").value = promptData.name;
+            document.getElementById("editPromptContent").value = promptData.prompt;
+            document.getElementById("editPromptDescription").value = promptData.description || "";
+            document.getElementById("editPromptTags").value = promptData.tags || "";
+            editModal.classList.remove("hidden");
+          }
+        }
+        function closeEditModal() {
+          editModal.classList.add("hidden");
+          editPromptForm.reset();
+        }
+        function deletePrompt(id) {
+          prompts = prompts.filter((p) => p.id !== id);
+          savePromptsToStorage();
+          renderPrompts();
+        }
+
+        /* ---------------- Import/Export Modal Functions ---------------- */
+        function openImportExportModal() {
+          importExportTextarea.value = JSON.stringify(prompts, null, 2);
+          importExportModal.classList.remove("hidden");
+        }
+        function closeImportExportModal() {
+          importExportModal.classList.add("hidden");
+        }
+
+        /* ---------------- Form Submission Handlers ---------------- */
+        createPromptForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const name = document.getElementById("createPromptName").value.trim();
+          const promptText = document.getElementById("createPromptContent").value.trim();
+          const description = document.getElementById("createPromptDescription").value.trim();
+          const tags = document.getElementById("createPromptTags").value.trim();
+          if (name && promptText) {
+            const newPrompt = {
+              id: generateId(),
+              name: name,
+              prompt: promptText,
+              description: description,
+              tags: tags,
+              lastUpdated: new Date().toISOString(),
+            };
+            prompts.push(newPrompt);
+            savePromptsToStorage();
+            renderPrompts();
+            closeCreateModal();
+          }
+        });
+        editPromptForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const id = document.getElementById("editPromptId").value;
+          const name = document.getElementById("editPromptName").value.trim();
+          const promptText = document.getElementById("editPromptContent").value.trim();
+          const description = document.getElementById("editPromptDescription").value.trim();
+          const tags = document.getElementById("editPromptTags").value.trim();
+          const promptIndex = prompts.findIndex((p) => p.id === id);
+          if (promptIndex > -1 && name && promptText) {
+            prompts[promptIndex] = {
+              id: id,
+              name: name,
+              prompt: promptText,
+              description: description,
+              tags: tags,
+              lastUpdated: new Date().toISOString(),
+            };
+            savePromptsToStorage();
+            renderPrompts();
+            closeEditModal();
+          }
+        });
+        cancelCreate.addEventListener("click", function () {
+          closeCreateModal();
+        });
+        cancelEditBtn.addEventListener("click", function () {
+          closeEditModal();
+        });
+        deletePromptModalBtn.addEventListener("click", function () {
+          const id = document.getElementById("editPromptId").value;
+          if (confirm("Are you sure you want to delete this prompt?")) {
+            deletePrompt(id);
+            closeEditModal();
+          }
+        });
+
+        /* ---------------- Import/Export Handlers ---------------- */
+        openImportExportButton.addEventListener("click", function () {
+          openImportExportModal();
+        });
+        closeImportExport.addEventListener("click", function () {
+          closeImportExportModal();
+        });
+        copyDataBtn.addEventListener("click", function () {
+          navigator.clipboard.writeText(importExportTextarea.value)
+            .then(() => { showNotification("Data copied to clipboard!"); })
+            .catch(() => { showNotification("Failed to copy data."); });
+        });
+        downloadDataBtn.addEventListener("click", function () {
+          const dataStr = JSON.stringify(prompts, null, 2);
+          const blob = new Blob([dataStr], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "ai-prompts.json";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showNotification("JSON file downloaded.");
+        });
+        uploadDataBtn.addEventListener("click", function () {
+          fileInput.click();
+        });
+        fileInput.addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (evt) {
+              try {
+                const importedData = JSON.parse(evt.target.result);
+                if (Array.isArray(importedData)) {
+                  if (confirm("This will replace your current data. Do you want to continue?")) {
+                    prompts = importedData;
+                    savePromptsToStorage();
+                    renderPrompts();
+                    showNotification("Data imported successfully from file!");
+                    closeImportExportModal();
+                  }
+                } else {
+                  showNotification("Invalid data format. Expecting an array.");
+                }
+              } catch (err) {
+                showNotification("Invalid JSON file. Please check your file.");
+              }
+            };
+            reader.readAsText(file);
+          }
+        });
+        importDataBtn.addEventListener("click", function () {
+          try {
+            const importedData = JSON.parse(importExportTextarea.value);
+            if (Array.isArray(importedData)) {
+              if (confirm("This will replace your current data. Do you want to continue?")) {
+                prompts = importedData;
+                savePromptsToStorage();
+                renderPrompts();
+                showNotification("Data imported successfully!");
+                closeImportExportModal();
+              }
+            } else {
+              showNotification("Invalid data format. Expecting an array.");
+            }
+          } catch (err) {
+            showNotification("Invalid JSON data. Please check your input.");
+          }
+        });
+
+        /* ---------------- Search Input Handler ---------------- */
+        searchInput.addEventListener("input", function () {
+          currentSearchQuery = searchInput.value.trim();
+          renderPrompts();
+        });
+        clearSearchButton.addEventListener("click", function () {
+          searchInput.value = "";
+          currentSearchQuery = "";
+          renderPrompts();
+        });
+
+        /* ---------------- Global Keyboard Shortcuts ---------------- */
+        document.addEventListener("keydown", function (e) {
+          // If Esc is pressed, clear the search query.
+          if (e.key === "Escape") {
+            searchInput.value = "";
+            currentSearchQuery = "";
+            renderPrompts();
+          }
+          // If a non-modifier key is pressed and focus is not in an input or textarea,
+          // focus the search input and append the character.
+          else if (
+            e.key.length === 1 &&
+            !e.ctrlKey &&
+            !e.altKey &&
+            !e.metaKey &&
+            document.activeElement.tagName !== "INPUT" &&
+            document.activeElement.tagName !== "TEXTAREA"
+          ) {
+            searchInput.focus();
+            searchInput.value += e.key;
+            currentSearchQuery = searchInput.value;
+            renderPrompts();
+          }
+        });
+
+        /* ---------------- Enable Enter/Return to Submit Forms ---------------- */
+        function enableEnterSubmission(form) {
+          form.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              form.dispatchEvent(new Event("submit", { cancelable: true }));
+            }
+          });
+        }
+        enableEnterSubmission(createPromptForm);
+        enableEnterSubmission(editPromptForm);
+
+        /* ---------------- Keyboard Shortcut for Opening Create Modal (Alt/Opt+N) ---------------- */
+        document.addEventListener("keydown", function (e) {
+          // Check for either altKey or metaKey (covers Alt/Option on macOS)
+          if ((e.altKey || e.metaKey) && e.key.toLowerCase() === "n") {
+            e.preventDefault();
+            console.log("Alt/Opt+N shortcut triggered");
+            openCreateModal();
+          }
+        });
+        newButton.addEventListener("click", function () {
+          openCreateModal();
+        });
+
+        /* ---------------- Click Outside to Close Modals ---------------- */
+        function addClickOutsideToClose(modalElement, closeFunction) {
+          modalElement.addEventListener("click", function (e) {
+            if (e.target === modalElement) {
+              closeFunction();
+            }
+          });
+        }
+        addClickOutsideToClose(infoModal, function () {
+          infoModal.classList.add("hidden");
+          localStorage.setItem("hasSeenInfoModal", "true");
+        });
+        addClickOutsideToClose(createModal, closeCreateModal);
+        addClickOutsideToClose(editModal, closeEditModal);
+        addClickOutsideToClose(importExportModal, closeImportExportModal);
+
+        /* ---------------- Info Modal: Show on First Visit and via Info Button ---------------- */
+        if (!localStorage.getItem("hasSeenInfoModal")) {
+          infoModal.classList.remove("hidden");
+        }
+        closeInfoModal.addEventListener("click", function () {
+          infoModal.classList.add("hidden");
+          localStorage.setItem("hasSeenInfoModal", "true");
+        });
+        infoButton.addEventListener("click", function () {
+          infoModal.classList.remove("hidden");
+        });
+
+        /* ---------------- Initial Load ---------------- */
+        loadPromptsFromStorage();
+        renderPrompts();
+        showNotification("Tip: Two quick clicks on a prompt copy its text (with variable substitution if enabled), while a long press (800ms) opens the edit modal.");
+      });
+    </script>
+  </body>
+</html>
